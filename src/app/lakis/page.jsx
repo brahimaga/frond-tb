@@ -407,8 +407,13 @@ const ProductDisplay = () => {
                 </button>
               </a>
               <a href="/lakis/history">
-              <button className="bg-green-700 rounded-full w-[150px] h-[50px] text-sm font-medium">
+              <button className="bg-white rounded-full w-[150px] h-[50px] text-sm font-medium">
                 History
+              </button>
+              </a>
+              <a href="/table">
+              <button className="bg-white rounded-full w-[150px] h-[50px] text-sm font-medium">
+                Table
               </button>
               </a>
             </div>

@@ -42,21 +42,21 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
-      style={{ backgroundImage: "url('/background2.jpg')" }} // ضع الصورة داخل public/background.jpg
+      style={{ backgroundImage: "url('/backgrund3.jpg')" }}
     >
-      <div className="max-w-md w-full p-8 bg-white/10 text-black backdrop-blur-lg rounded-3xl shadow-[30px]">
-        <div className="flex justify-center mb-6">
+      <div className="w-full max-w-md p-8 bg-white/25 text-black backdrop-blur-lg rounded-[40px] shadow-2xl">
+        <div className="flex justify-center mt-2 mb-6">
           <Image
-            src="/logoDarsmok.webp"
+            src="/logo.svg"
             alt="Company Logo"
-            width={100}
-            height={100}
+            width={181.99}
+            height={46.45}
             className="object-contain"
             priority
           />
         </div>
 
-        <h2 className="text-3xl font-extrabold text-center mb-6">Login to Your Account</h2>
+        <h2 className="text-2xl text-white text-center mb-6">Login to your account</h2>
 
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
@@ -65,45 +65,50 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium mb-1">
-              Username
-            </label>
+          {/* Username field */}
+          <div className="relative">
+            <img
+              className="absolute left-3 top-3 w-6 h-6"
+              src="/icona.svg"
+              alt="icon"
+            />
             <input
-              id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
               disabled={isLoading}
               required
-              className="w-full px-4 py-3 bg-gray-100 text-black rounded-full border border-gray-200 focus:ring-2 focus:ring-green-400 focus:outline-none placeholder-gray-500"
+              className="w-full pl-12 pr-4 py-3 bg-gray-100 text-black rounded-full border border-gray-200 focus:ring-2 focus:ring-green-400 focus:outline-none placeholder-gray-500"
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1">
-              Password
-            </label>
+          {/* Password field */}
+          <div className="relative">
+            <img
+              className="absolute left-3 top-3 w-6 h-6"
+              src="/icona.svg"
+              alt="icon"
+            />
             <input
-              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               disabled={isLoading}
               required
-              className="w-full px-4 py-3 bg-gray-100 text-black rounded-full border border-gray-200 focus:ring-2 focus:ring-green-400 focus:outline-none placeholder-gray-500"
+              className="w-full pl-12 pr-4 py-3 bg-gray-100 text-black rounded-full border border-gray-200 focus:ring-2 focus:ring-green-400 focus:outline-none placeholder-gray-500"
             />
           </div>
 
+          {/* Submit button */}
           <button
             type="submit"
             disabled={isLoading}
             className={`w-full py-3 px-4 rounded-full text-white font-semibold transition-all duration-200 ${
               isLoading
                 ? 'bg-gray-700 cursor-not-allowed'
-                : 'bg-black hover:bg-gray-900 focus:ring-2 focus:ring-green-400 focus:ring-offset-2'
+                : 'bg-[#E73E2B] hover:bg-gray-900 focus:ring-2 focus:ring-green-400 focus:ring-offset-2'
             }`}
           >
             {isLoading ? (
