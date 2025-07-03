@@ -16,31 +16,23 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const response = await fetch('http://192.168.1.109:8002/api/login', {
+      const response = await fetch('http://109.123.252.86:8080/api/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        throw new Error(data.message || 'Invalid username or password');
       }
 
-      const data = await response.json();
-      
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
       router.push('/lakis');
-
     } catch (err) {
-      setError(err.message || 'An error occurred during login');
+      setError(err.message || 'Something went wrong');
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);
@@ -48,78 +40,99 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-red-100 to-red-700">
-      <div className="max-w-md w-full p-8 bg-white/100  text-black backdrop-blur-md ring-1 ring-white/5 rounded-3xl shadow-xl">
-        <div className="flex justify-center mb-8">
-          <Image 
-            src="/logoDarsmok.webp" 
-            alt="Company Logo" 
-            width={140} 
-            height={140}
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
+      style={{ backgroundImage: "url('/background2.jpg')" }} // ضع الصورة داخل public/background.jpg
+    >
+      <div className="max-w-md w-full p-8 bg-white/10 text-black backdrop-blur-lg rounded-3xl shadow-[30px]">
+        <div className="flex justify-center mb-6">
+          <Image
+            src="/logoDarsmok.webp"
+            alt="Company Logo"
+            width={100}
+            height={100}
             className="object-contain"
             priority
           />
         </div>
-        
-        <h2 className="text-3xl font-bold text-center text-black mb-8">Login</h2>
-        
+
+        <h2 className="text-3xl font-extrabold text-center mb-6">Login to Your Account</h2>
+
         {error && (
-          <div className="mb-6 p-3 bg-red-500/20 text-red-100 rounded-lg text-sm border border-red-500/30">
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
             {error}
           </div>
         )}
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-black/80 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium mb-1">
               Username
             </label>
             <input
-              type="text"
               id="username"
+              type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-100 border border-white/10 rounded-[40px] focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-black placeholder-white/50"
               placeholder="Enter your username"
-              required
               disabled={isLoading}
+              required
+              className="w-full px-4 py-3 bg-gray-100 text-black rounded-full border border-gray-200 focus:ring-2 focus:ring-green-400 focus:outline-none placeholder-gray-500"
             />
           </div>
-          
+
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-black/80 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium mb-1">
               Password
             </label>
             <input
-              type="password"
               id="password"
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-100 border border-white/10 rounded-[40px] focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-black placeholder-white/50"
               placeholder="Enter your password"
-              required
               disabled={isLoading}
+              required
+              className="w-full px-4 py-3 bg-gray-100 text-black rounded-full border border-gray-200 focus:ring-2 focus:ring-green-400 focus:outline-none placeholder-gray-500"
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-3 px-4 rounded-[40px] font-semibold transition-all duration-200 ${
-              isLoading 
-                ? 'bg-black cursor-not-allowed' 
-                : 'bg-black hover:bg-grey-1 00 focus:ring-2 focus:ring-green-400 focus:ring-offset-2'
-            } text-white`}
+            className={`w-full py-3 px-4 rounded-full text-white font-semibold transition-all duration-200 ${
+              isLoading
+                ? 'bg-gray-700 cursor-not-allowed'
+                : 'bg-black hover:bg-gray-900 focus:ring-2 focus:ring-green-400 focus:ring-offset-2'
+            }`}
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"
+                  />
                 </svg>
                 Processing...
               </span>
-            ) : 'Login'}
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
       </div>

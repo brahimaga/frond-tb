@@ -11,10 +11,6 @@ const formatCurrency = (amount) => {
     maximumFractionDigits: 2
   }).format(amount);
 };
-//username
-
-
-
 
 const ProductDisplay = () => {
   const [username, setUsername] = useState("");
@@ -31,6 +27,7 @@ const ProductDisplay = () => {
       }
     }
   }, []);
+
   // State management
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -89,7 +86,7 @@ const ProductDisplay = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await fetchWithAuth('http://192.168.1.109:8002/api/categories');
+        const data = await fetchWithAuth('http://109.123.252.86:8080/api/categories');
         
         const transformedCategories = [
           { id: 'all', name: 'All Products' },
@@ -102,7 +99,6 @@ const ProductDisplay = () => {
         setCategories(transformedCategories);
       } catch (error) {
         console.error('Error fetching categories:', error);
-        // Keep default categories if API fails
       }
     };
 
@@ -113,7 +109,7 @@ const ProductDisplay = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await fetchWithAuth('http://192.168.1.109:8002/api/products');
+        const data = await fetchWithAuth('http://109.123.252.86:8080/api/products');
         
         // Handle different response formats
         let productsData = [];
@@ -163,7 +159,7 @@ const ProductDisplay = () => {
     return { subtotal, total };
   }, [currentOrder]);
 
-  // Filter products based on category and search query
+  // Filter products based on category, search query, and stock availability
   const filteredProducts = useMemo(() => {
     if (!Array.isArray(products)) return [];
     
@@ -173,8 +169,9 @@ const ProductDisplay = () => {
       
       const categoryMatch = activeTab === 'all' || productCategory == activeTab;
       const searchMatch = productName.includes(searchQuery.toLowerCase());
+      const hasStock = product.variableProducts.some(vp => vp.quantity > 0);
       
-      return categoryMatch && searchMatch;
+      return categoryMatch && searchMatch && hasStock;
     });
   }, [activeTab, searchQuery, products]);
 
@@ -254,8 +251,6 @@ const ProductDisplay = () => {
       const userData = JSON.parse(userDataString);
       const userId = userData.id;
 
-
-
       const orderData = {
         user_id: userId,
         client_id: 1,
@@ -266,7 +261,7 @@ const ProductDisplay = () => {
         }))
       };
 
-      await fetchWithAuth('http://192.168.1.109:8002/api/orders', {
+      await fetchWithAuth('http://109.123.252.86:8080/api/orders', {
         method: 'POST',
         body: JSON.stringify(orderData)
       });
@@ -283,8 +278,20 @@ const ProductDisplay = () => {
 
   // Add product to order
   const addToOrder = (product, variant) => {
+    // Check if variant is out of stock
+    if (variant.quantity <= 0) {
+      alert('This product is out of stock');
+      return;
+    }
+    
+    // Check if adding would exceed available stock
+    const existingItem = currentOrder.find(item => item.id === variant.id);
+    if (existingItem && (existingItem.quantity >= variant.quantity)) {
+      alert('Not enough stock available');
+      return;
+    }
+
     setCurrentOrder(prev => {
-      const existingItem = prev.find(item => item.id === variant.id);
       if (existingItem) {
         return prev.map(item =>
           item.id === variant.id
@@ -310,6 +317,17 @@ const ProductDisplay = () => {
   // Update product quantity in order
   const updateItemQuantity = (idToUpdate, newQuantity) => {
     const safeNewQuantity = Math.max(1, parseInt(newQuantity) || 1);
+    
+    // Find the product variant to check stock
+    const variant = products
+      .flatMap(p => p.variableProducts)
+      .find(vp => vp.id === idToUpdate);
+    
+    if (variant && safeNewQuantity > variant.quantity) {
+      alert(`Only ${variant.quantity} items available in stock`);
+      return;
+    }
+
     setCurrentOrder(prev => {
       return prev.map(item =>
         item.id === idToUpdate
@@ -322,9 +340,20 @@ const ProductDisplay = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl font-semibold">Loading...</div>
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="flex flex-col items-center gap-3">
+        <div
+          className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"
+          role="status"
+          aria-label="Loading spinner"
+        ></div>
+        <span className="text-lg font-medium text-green-600 tracking-wide">
+          Loading...
+        </span>
       </div>
+    </div>
+    
+    
     );
   }
 
@@ -369,16 +398,24 @@ const ProductDisplay = () => {
       <div className="max-w-full mx-auto flex flex-col lg:flex-row gap-6">
         {/* Left Column - Current Order and Payment */}
         <div className="lg:w-2/3 h-full space-y-6">
-          {/* button */}
-          <div className="bg-green-200 rounded-[40px] flex items-center w-full h-[100px] px-4">
-  <a href="/edit">
-    <button className="bg-white rounded-full mt-[20px] w-[150px] text-[13px] h-[50px]">
-      Edit Product Price
-    </button>
-  </a>
-  <h1 className="ml-auto bg-white rounded-full text-[30px]">{username}</h1>
-</div>
-
+          {/* Header buttons */}
+          <div className="bg-green-200 rounded-[40px] flex items-center justify-between w-full h-[100px] px-6">
+            <div className="flex items-center gap-4">
+              <a href="/edit">
+                <button className="bg-white rounded-full w-[150px] h-[50px] text-sm font-medium">
+                  Edit Product Price
+                </button>
+              </a>
+              <a href="/lakis/history">
+              <button className="bg-green-700 rounded-full w-[150px] h-[50px] text-sm font-medium">
+                History
+              </button>
+              </a>
+            </div>
+            <div className="bg-white rounded-full px-6 py-2 text-xl font-semibold">
+              {username}
+            </div>
+          </div>
 
           {/* Current Order Section */}
           <div className="bg-white rounded-3xl shadow-md p-6">
@@ -633,9 +670,16 @@ const ProductDisplay = () => {
                   product.variableProducts.map(variant => (
                     <div
                       key={variant.id}
-                      className="bg-gray-50 rounded-xl p-3 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
-                      onClick={() => addToOrder(product, variant)}
+                      className={`relative bg-gray-50 rounded-xl p-3 hover:shadow-md transition-shadow cursor-pointer flex flex-col ${
+                        variant.quantity <= 0 ? 'opacity-70' : ''
+                      }`}
+                      onClick={() => variant.quantity > 0 && addToOrder(product, variant)}
                     >
+                      {variant.quantity <= 0 && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
+                          <span className="text-white font-bold">SOLD OUT</span>
+                        </div>
+                      )}
                       <div className="relative mb-2">
                         <div className="w-full h-24 bg-gray-200 rounded-lg flex items-center justify-center">
                           <span className="text-xs text-gray-500">No image</span>
@@ -650,15 +694,23 @@ const ProductDisplay = () => {
                         <p className="text-gray-700 text-xs mt-1 text-center">
                           {formatCurrency(variant.price || 0)}
                         </p>
+                        <p className="text-xs text-center mt-1">
+                          Stock: {variant.quantity}
+                        </p>
                       </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          addToOrder(product, variant);
+                          if (variant.quantity > 0) addToOrder(product, variant);
                         }}
-                        className="mt-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm w-full"
+                        className={`mt-2 px-3 py-1.5 rounded-lg text-sm w-full ${
+                          variant.quantity > 0 
+                            ? 'bg-green-600 text-white hover:bg-green-700' 
+                            : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                        } transition-colors`}
+                        disabled={variant.quantity <= 0}
                       >
-                        Add to Order
+                        {variant.quantity > 0 ? 'Add to Order' : 'Out of Stock'}
                       </button>
                     </div>
                   ))

@@ -20,7 +20,7 @@ const GreenProductTable = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://192.168.1.109:8002/api/products', {
+        const response = await fetch('http://109.123.252.86:8080/api/products', {
           headers: {
             'Authorization': 'Bearer ' + localStorage.getItem('token')
           }
@@ -52,7 +52,7 @@ const GreenProductTable = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://192.168.1.109:8002/api/logout', {
+      const response = await fetch('http://109.123.252.86:8080/api/logout', {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('token'),
@@ -142,8 +142,8 @@ const GreenProductTable = () => {
 
       // API call
       const endpoint = isAdding 
-        ? `http://192.168.1.109:8002/api/${currentProduct.variableProductId}/add-quantity`
-        : `http://192.168.1.109:8002/api/${currentProduct.variableProductId}/reduce-quantity`;
+        ? `http://109.123.252.86:8080/api/${currentProduct.variableProductId}/add-quantity`
+        : `http://109.123.252.86:8080/api/${currentProduct.variableProductId}/reduce-quantity`;
 
       const response = await fetch(endpoint, {
         method: 'PUT',
@@ -222,6 +222,8 @@ const GreenProductTable = () => {
             >
               Back to Home
             </button>
+
+  
           </div>
         </div>
       </div>
@@ -307,6 +309,17 @@ const GreenProductTable = () => {
             </svg>
             Home
           </button>
+
+
+          <button
+  onClick={() => router.push('/edit')}
+  className="flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-800 rounded-xl hover:bg-gray-200 transition-all duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+>
+
+
+  <span className="text-sm font-medium">Edit</span>
+</button>
+
         </div>
         
         <h1 className="text-2xl md:text-3xl font-bold text-green-800 text-center">Product Inventory</h1>

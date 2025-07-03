@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const ProductTable = () => {
-  const API_BASE_URL = "http://192.168.1.109:8002/api";
+  const API_BASE_URL = "http://109.123.252.86:8080/api";
   const PRODUCTS_ENDPOINT = "/products";
   const UPDATE_PRICE_ENDPOINT = (id) => `/variable-products/${id}/update-price`;
 

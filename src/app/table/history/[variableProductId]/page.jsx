@@ -28,7 +28,7 @@ function ProductTransactions() {
         }
 
         const response = await fetch(
-          `http://192.168.1.109:8002/api/variable-products/${variableProductId}/transactions`,
+          `http://109.123.252.86:8080/api/variable-products/${variableProductId}/transactions`,
           {
             headers: {
               'Authorization': `Bearer ${token}`,
