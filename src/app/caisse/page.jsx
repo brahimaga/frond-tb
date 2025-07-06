@@ -406,7 +406,7 @@ const ProductDisplay = () => {
                   Edit Product Price
                 </button>
               </a>
-              <a href="/lakis/history">
+              <a href="/caisse/history">
               <button className="bg-white rounded-full w-[150px] h-[50px] text-sm font-medium">
                 History
               </button>

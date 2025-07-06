@@ -30,7 +30,7 @@ export default function LoginPage() {
 
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      router.push('/lakis');
+      router.push('/caisse');
     } catch (err) {
       setError(err.message || 'Something went wrong');
       console.error('Login error:', err);
